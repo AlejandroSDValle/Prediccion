@@ -1,0 +1,92 @@
+{% extends "./base.html" %}
+{% load static %}
+{% block title %} Prediccion Producto{% endblock %}
+{% block body %}
+
+<!-- {% for venta in ventas %}
+ <div>{{venta.fecha}} - {{venta.cantidad_total}} - {{venta.id_producto_det__nombre_producto}} - {{venta.id_producto_det__id_marca_producto__nombre_marca}} </div>
+{% endfor %} -->
+
+
+<!-- 
+    ---------------------- Del producto en especifico  -----------------------------
+-->
+
+    {% if messages %}
+        {% for message in messages %}
+            {% if message.tags == 'warning' %}
+                <div class="alert alert-dismissible alert-danger">
+                <strong class="text-dark">{{ message }}</strong>
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+
+    <div id="listado">
+
+    {% for key, value in productos.items %} 
+    <div class="border border-4 px-3 my-5 rounded border-secondary">
+        <p class="text-center fs-4">{{value}}</p>
+        <div class="row">
+            <div class="row ">
+                <div class="col-6">
+                    <p>Ventas del Ultimo Año</p>
+                    <div id="{{key}}1" >
+                        <canvas id="UltimoYear{{key}}"  style="width: 100%;"></canvas>
+                    </div>
+                </div>
+                
+                <div class="col-6">
+                    <p>Ventas de los ultimos 15 dias</p>
+                    <div  id="{{key}}2" >
+                        <canvas id="ultimasSemana{{key}}"  style="width: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row  mt-3">
+                <div class="col-5">
+                    <p>Meses con mas ventas</p>
+                    <div id="{{key}}3">
+                        <canvas id="mesVentas{{key}}" style="width: 100%;"></canvas>
+                    </div>
+                </div>
+                <div class="col-7">
+                    <div class="d-flex flex-column align-items-center">
+                        <p>Prediccion de la venta en la siguiente semana</p>
+                        <div>
+                            <p>Prediccion de ventas siguiente semana: <span id="prediccion{{key}}"></span></p>
+                            <p>Recomendacion de compra: <span id="compra{{key}}"></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>   
+        </div>
+    </div>       
+    {% endfor %}
+
+    </div>
+
+    
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+
+    let llaves = [];
+    let productos = JSON.parse('{{ productos|safe|escapejs }}'.replace(/'/g, "\""));
+    let keys = Object.keys(productos);
+    keys.forEach(function(key) {
+        llaves.push(key);
+    });
+
+    let UltimoYear = JSON.parse('{{ datos.UltimoYear|safe|escapejs }}'.replace(/'/g, "\""));
+    let mesVentasCurso = JSON.parse('{{ datos.mesVentasCurso|safe|escapejs }}'.replace(/'/g, "\""));
+    let mesVentasPasado = JSON.parse('{{ datos.mesVentasPasado|safe|escapejs }}'.replace(/'/g, "\""));
+    let ultimasSemana = JSON.parse('{{ datos.ultimasSemana|safe|escapejs }}'.replace(/'/g, "\"")); 
+
+    let prediccion = JSON.parse('{{ resultadosPrediccion|safe|escapejs }}'.replace(/'/g, "\"")); 
+    let compras = JSON.parse('{{ stocks|safe|escapejs }}'.replace(/'/g, "\"")); 
+</script>
+<script src="{% static 'js/graficas.js' %}"></script>
+{% endblock %}

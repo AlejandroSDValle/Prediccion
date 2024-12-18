@@ -1,0 +1,64 @@
+
+{% extends "./base.html" %}
+{% load static %}
+
+{% block title %} Inicio{% endblock %}
+
+{% block body %}
+
+
+<h1>Bienvenidos</h1>
+<!-- 
+    ------------------ En general ----------------------
+    Graficas de los productos mas vendidos, menos vendidos y productos con poco stock
+-->
+
+<div class="row border border-4 px-3 my-3 rounded border-secondary">
+    <div class="col-6 ">
+        {% if masVendidos %}
+            <p>El producto mas vendido es {{ masVendidos.0.nombre_marca }} {{ masVendidos.0.nombre_producto }}</p>
+            <p>Cantidad: {{ masVendidos.0.Cantidad }}</p>
+        {% else %}
+            <p>No hay datos disponibles.</p>
+        {% endif %}
+        <div id="grafica1" >
+            <canvas id="masVendidos"  style="width: 100%;"></canvas>
+        </div>
+    </div>
+    <div class="col-6">
+        {% if menosVendidos %}
+            <p>El producto menos vendido es {{ menosVendidos.0.nombre_marca }} {{ menosVendidos.0.nombre_producto }} </p>
+            <p>Cantidad: {{ menosVendidos.0.Cantidad }}</p>
+        {% else %}
+            <p>No hay datos disponibles.</p>
+        {% endif %}
+        <div id="grafica2" >
+            <canvas id="menosVendidos"  style="width: 100%;"></canvas>
+        </div>
+    </div>
+</div>
+<div class="row border border-4 px-3 my-3 rounded border-secondary mt-2">
+    <div class="col-6 ">
+        {% if pocoStock %}
+            <p>Los productos con poco stock son:</p>
+            
+                {% for producto in pocoStock %}
+                <p>
+                  {{producto.nombre_producto}} - {{producto.id_marca_producto.nombre_marca}} - Stock: {{producto.stock_producto}}
+                {% endfor %}
+            
+        {% else %}
+            <p>No hay datos disponibles.</p>
+        {% endif %}
+    </div>
+</div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        let masVendidos = JSON.parse('{{ masVendidos|safe|escapejs }}'.replace(/'/g, "\""));
+        let menosVendidos = JSON.parse('{{ menosVendidos|safe|escapejs }}'.replace(/'/g, "\""));
+    </script>
+    <script src="{% static 'js/home.js' %}"></script>
+
+{% endblock %}

@@ -1,0 +1,66 @@
+
+{% extends "./base.html" %}
+{% load static %}
+{% block title %} Prediccion {% endblock %}
+
+{% block body %}
+<div class="d-flex justify-content-center align-items-center">
+  <div class="bg-white p-5 rounded-5" style="width: 45rem;">
+    <div>
+
+      <div class="d-flex justify-content-center">
+        <a href="/"><img src="{% static 'img/colibri.png' %}"" alt="Logo"></a>
+      </div>
+      <div class="text-center fs-1 fw-bold">Prediccion</div>
+
+      <small class="form-text text-muted " style="font-size: 1.1rem;">Separe los productos escribiendo su nombre y luego una coma (,). <br> ejemplo: crema, leche, huevos</small>
+
+
+      {% if messages %}
+      {% for message in messages %}
+        {% if message.tags == 'success' %}
+          <div class="alert alert-dismissible alert-success">
+            <strong class="text-dark">{{ message }}</strong>
+          </div>
+        {% elif message.tags == 'warning' %}
+          <div class="alert alert-dismissible alert-danger">
+            <strong class="text-dark">{{ message }}</strong>
+          </div>
+        {% endif %}
+      {% endfor %}
+      {% endif %}
+
+      <form action="{% url 'APIPrediccion' %}" method="post" id="formulario"> {% csrf_token %}
+
+        <div id="productosPrediccion">
+          <ul id="listaProductos" class="list-group"></ul>
+          <input type="hidden" id="cantidad" name="cantidad" value="0">
+        </div>
+
+        <div class="input-group mt-4">
+          <div class="input-group-text bg-primary">
+            <ion-icon name="cart-outline" style="color: white;"></ion-icon>
+          </div>
+          <input list="productos" name="producto" placeholder="ingrese (producto - marca)" class="form-control" id="producto" >
+          <datalist id="productos">
+            {% for producto in productos %}
+              <option value="{{producto.nombre_producto}} - {{producto.id_marca_producto.nombre_marca}}">             
+            {% endfor %}
+          </datalist>
+        </div> 
+        
+        <button type="submit" class="btn btn-primary text-white w-100 mt-3" onclick="cargarLoader()">Enviar</button>
+
+        <div class="contenedor-loader">
+          <span class="loader"></span>
+        </div>
+        
+        
+      </form>
+
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'js/inputsProductos.js' %}"></script>
+{% endblock %}
